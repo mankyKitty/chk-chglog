@@ -1,0 +1,7 @@
+[package]
+name = "chk-chglog"
+version = "0.1.0"
+authors = ["Sean Chalmers <sean.chalmers@iseek.com.au>"]
+
+[dependencies]
+chrono = "0.2"
