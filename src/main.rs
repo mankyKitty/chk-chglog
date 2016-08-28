@@ -39,7 +39,7 @@ fn read_changelog(fp: &str) -> String {
 // fn parse_date_m(s: &str) -> Result<NaiveDate, String> {
 //     let d: Vec<&str> = s.split_at(2).1.split_whitespace().take(4).collect();
 
-//     NaiveDate::parse_from_str(&d.concat(), "%a%h%d%Y")
+//     NaiveDate::parse_from_str(&s[2..17], "%a %h %d %Y")
 //         .map_err( |e| format!("Date Parse Error: {} in {}", e, s) )
 // }
 
