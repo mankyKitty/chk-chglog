@@ -1,7 +1,7 @@
 extern crate chrono;
 
 use std::fs::File;
-
+use std::cmp::*;
 use std::io::prelude::*;
 
 use std::path::Path;
@@ -77,11 +77,54 @@ fn parse_ver(s: &str) -> Vec<i8> {
     v_str.split(".").map(|c| c.parse::<i8>().unwrap()).collect()
 }
 
+#[test]
+fn compare_ver_expect_false() {
+    let a = vec![1, 2, 0];
+    let b = vec![1, 1, 0];
+
+    assert_eq!(compare_ver(&a,&b), Ordering::Greater);
+}
+#[test]
+fn compare_ver_edge() {
+    let a = vec![1, 3, 0];
+    let b = vec![1, 2, 5];
+    assert_eq!(compare_ver(&a,&b), Ordering::Greater);
+}
+#[test]
+fn compare_ver_catch() {
+    let a = vec![1, 3, 0];
+    let b = vec![1, 3, 5];
+    assert_eq!(compare_ver(&a,&b), Ordering::Less);
+}
+#[test]
+fn compare_ver_ummm() {
+    let a = vec![1, 3, 0, 4];
+    let b = vec![1, 3, 5];
+    assert_eq!(compare_ver(&a,&b), Ordering::Less);
+}
+#[test]
+fn compare_ver_wut() {
+    let a = vec![1, 3, 4];
+    let b = vec![1, 3, 0, 5];
+    assert_eq!(compare_ver(&a,&b), Ordering::Greater);
+}
+
+fn ver_pair_compare(prev: Ordering, (a,b): (&i8, &i8) ) -> Ordering {
+    match prev {
+        Ordering::Less => Ordering::Less,
+        Ordering::Equal => Ord::cmp(&a, &b),
+        Ordering::Greater => Ordering::Greater
+    }
+}
+fn compare_ver(a: &Vec<i8>, b: &Vec<i8> ) -> Ordering {
+    a.iter().zip(b.iter()).fold(Ordering::Equal, ver_pair_compare )
+}
+
 fn chk_entry(a: &Entry, b: &Entry) {
     if a.date < b.date {
         println!("Changelog dates not in order");
         std::process::exit(1)
-    } else if a.ver < b.ver {
+    } else if compare_ver(&a.ver, &b.ver) == Ordering::Less {
         println!("Changelog versions not in order");
         std::process::exit(1)
     }
