@@ -8,7 +8,6 @@ use std::path::Path;
 
 use chrono::naive::date::NaiveDate;
 
-#[derive(Debug)]
 struct Entry {
     line_num: usize,
     date: NaiveDate,
