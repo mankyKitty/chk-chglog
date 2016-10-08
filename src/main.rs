@@ -137,7 +137,7 @@ fn ooo_err_die(typ: &str, cname: &str, a_v: String, b_v: String, a_n: usize, b_n
 fn chk_entry(cname: &str, a: &Entry, b: &Entry) {
     if a.date < b.date {
         ooo_err_die(
-            "Date",
+            "Dates",
             cname,
             a.date.to_string(),
             b.date.to_string(),
