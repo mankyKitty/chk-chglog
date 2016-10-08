@@ -10,6 +10,7 @@ use chrono::naive::date::NaiveDate;
 
 #[derive(Debug)]
 struct Entry {
+    line_num: usize,
     date: NaiveDate,
     ver: Vec<i8>,
 }
@@ -120,25 +121,53 @@ fn compare_ver(a: &Vec<i8>, b: &Vec<i8> ) -> Ordering {
     a.iter().zip(b.iter()).fold(Ordering::Equal, ver_pair_compare )
 }
 
-fn chk_entry(a: &Entry, b: &Entry) {
+fn show_ver(v: &Vec<i8>) -> String {
+    let s: Vec<String> = v.iter().map( |n| { n.to_string() } ).collect();
+    s.join(".")
+}
+
+fn ooo_err_die(typ: &str, cname: &str, a_v: String, b_v: String, a_n: usize, b_n: usize) {
+    println!(
+        "[{}]: {} out of order: {} < {}, Lines: {},{}",
+        cname, typ, a_v, b_v, a_n, b_n
+    );
+    std::process::exit(1)
+}
+
+fn chk_entry(cname: &str, a: &Entry, b: &Entry) {
     if a.date < b.date {
-        println!("Changelog dates not in order");
-        std::process::exit(1)
+        ooo_err_die(
+            "Date",
+            cname,
+            a.date.to_string(),
+            b.date.to_string(),
+            a.line_num,
+            b.line_num
+        )
+
     } else if compare_ver(&a.ver, &b.ver) == Ordering::Less {
-        println!("Changelog versions not in order");
-        std::process::exit(1)
+        ooo_err_die(
+            "Versions",
+            cname,
+            show_ver( &a.ver ),
+            show_ver( &b.ver ),
+            a.line_num,
+            b.line_num
+        )
     }
 }
 
 fn main() {
-    let s = read_changelog(&std::env::args().nth(1).unwrap());
+    let cname = &std::env::args().nth(1).unwrap();
+    let s = read_changelog(cname);
 
-    let l: Vec<Entry> = s.lines()
-        .filter(|x| x.starts_with("*"))
+    let l: Vec<Entry> = s.lines().enumerate()
+        .filter(|x| x.1.starts_with("*"))
         .map(|x| {
             Entry {
-                date: parse_date(x),
-                ver: parse_ver(x),
+                line_num: x.0 + 1,
+                date: parse_date(x.1),
+                ver: parse_ver(x.1),
             }
         })
         .collect();
@@ -147,7 +176,7 @@ fn main() {
 
     while !iter.peek().is_none() {
         match (iter.next(), iter.peek()) {
-            (Some(e), Some(ne)) => chk_entry(e, ne),
+            (Some(e), Some(ne)) => chk_entry(cname, e, ne),
             _ => std::process::exit(0),
         }
     }
