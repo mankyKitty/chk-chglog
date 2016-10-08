@@ -1,6 +1,8 @@
 chk-chglog
 ==========
 
+[![Build Status](https://travis-ci.org/mankyKitty/chk-chglog.svg?branch=master)](https://travis-ci.org/mankyKitty/chk-chglog)
+
 Do you build RPMs ? 
 
 Do you have the good sense to include a Changelog ?
