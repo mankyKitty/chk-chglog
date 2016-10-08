@@ -38,17 +38,15 @@ fn read_changelog(fp: &str) -> String {
 
 // Result<> giving version of the function below
 // fn parse_date_m(s: &str) -> Result<NaiveDate, String> {
-//     let d: Vec<&str> = s.split_at(2).1.split_whitespace().take(4).collect();
-
 //     NaiveDate::parse_from_str(&s[2..17], "%a %h %d %Y")
 //         .map_err( |e| format!("Date Parse Error: {} in {}", e, s) )
 // }
 
-fn parse_date(s: &str) -> NaiveDate {
+fn parse_date(ln: usize, s: &str) -> NaiveDate {
     match NaiveDate::parse_from_str(&s[2..17], "%a %h %d %Y") {
         Ok(d) => d,
         Err(e) => {
-            println!("Date Parse Error: {} in {}", e, s);
+            println!("Date Parse Error: {} in {}, line:{}", e, s, ln);
             std::process::exit(1)
         }
     }
@@ -73,7 +71,7 @@ fn parse_date(s: &str) -> NaiveDate {
 // }
 
 // Terrifying version...
-fn parse_ver(s: &str) -> Vec<i8> {
+fn parse_ver(_ln: usize, s: &str) -> Vec<i8> {
     let v_str = s.split_whitespace().last().unwrap();
     v_str.split(".").map(|c| c.parse::<i8>().unwrap()).collect()
 }
@@ -117,6 +115,7 @@ fn ver_pair_compare(prev: Ordering, (a,b): (&i8, &i8) ) -> Ordering {
         Ordering::Greater => Ordering::Greater
     }
 }
+
 fn compare_ver(a: &Vec<i8>, b: &Vec<i8> ) -> Ordering {
     a.iter().zip(b.iter()).fold(Ordering::Equal, ver_pair_compare )
 }
@@ -164,10 +163,11 @@ fn main() {
     let l: Vec<Entry> = s.lines().enumerate()
         .filter(|x| x.1.starts_with("*"))
         .map(|x| {
+            let ln = x.0 + 1;
             Entry {
-                line_num: x.0 + 1,
-                date: parse_date(x.1),
-                ver: parse_ver(x.1),
+                line_num: ln,
+                date: parse_date(ln, x.1),
+                ver: parse_ver(ln, x.1),
             }
         })
         .collect();
