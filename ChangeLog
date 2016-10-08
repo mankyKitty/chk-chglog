@@ -1,0 +1,5 @@
+2016-10-08 Sean Chalmers <sclhiannan@gmail.com>
+
+	* main.rs: Improved error reporting.
+	* main.rs: Better messages when things are out of order.
+	* main.rs: Indecisive about error handling, leaving this as is for now.
