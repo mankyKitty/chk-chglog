@@ -12,12 +12,20 @@ Well, you've probably screwed up the Changelog at some point then. Shame it make
 This is a teeeeeny tiny little [Rust](https://www.rustlang.org) experiment to perform a lickity-split check of the dates and versions listed in your Changelog file to ensure everything is in the correct order and format.
 
 ```
-  $ chk-chglog Changelog
+  $ chk-chglog <filename>
 ```
 
 I recommend placing it into your ```pre-commit hook``` to stop silly mistakes from ever making it in. It's simple and swift, you won't know it's there.
 
-Currently it only works on Changelogs that are formatted as per the Fedora RPM specs, if anyone is interested enough to raise an issue, I should be able to make it work with other structures.
+Currently it only works on Changelogs that are formatted as per the Fedora RPM specs, there's an example in the Repo:
+
+```
+* Tue Oct 12 2016 - Jo Diggidy <jo.diggidy@werk.com.au> 0.1.3
+- Twerped some wups
+- Targled the Doogle-Spinz
+```
+
+If anyone is interested enough to raise an issue, I should be able to make it work with other structures.
 
 Maybe someone else might find it useful, who knows!
 
